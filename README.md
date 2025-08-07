@@ -1,7 +1,16 @@
 # Get-Spot-Electric-prices-with-n8n
 n8n AI Agent retrieves four(4) cheapest spot electric hours daily and outputs them to users Telegram-app at 7am.
 
-Imported json doesn't work as is! 
+Telegram bot is configured to channel BotFather with commands:
+
+/start
+
+/newbot
+
+YOU_RNAME_bot
+
+
+Imported json temp doesn't work as is!!!
 
 User must add own Id's to workflow!
  
