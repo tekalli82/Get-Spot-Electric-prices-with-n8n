@@ -3,10 +3,14 @@ n8n AI Agent retrieves four(4) cheapest spot electric hours daily and outputs th
 
 Imported json doesn't work as is! 
 
-User must add own ID:s to workflow!
+User must add own Id's to workflow!
  
-  -Input own Google Gemini ID as Google API key
+  -Input own Google Gemini Id as YOUR_GOOGLE_API_KEY
  
-  -Input own Telegram ID as Telegram API token
+  -Input own Telegram Id as YOUR_TELEGRAM_API_TOKEN
+
+  -Input own  Chat Id as YOUR_TELEGRAM_CHAT_ID
+
+  -Input own webhookId as YOUR_WEBHOOKID_UNIQUE_ID
   
 <img width="1501" height="855" alt="kuva" src="https://github.com/user-attachments/assets/c2152326-7a04-4757-af63-dc419dcf4073" />
