@@ -1,0 +1,248 @@
+{
+  "name": "hae_sahkon_hinnat",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://www.sahkohinta-api.fi/api/v1/halpa",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "tunnit",
+              "value": "=24"
+            },
+            {
+              "name": "tulos",
+              "value": "haja"
+            },
+            {
+              "name": "aikaraja",
+              "value": "={{ new Date(new Date().setHours(0, 0, 0, 0)).toISOString().split('T')[0] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        176,
+        0
+      ],
+      "id": "cb33c361-5e02-4b08-b7e9-0f8fa65cf61a",
+      "name": "HTTP Request",
+      "alwaysOutputData": true,
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        16,
+        0
+      ],
+      "id": "8fb34cc0-1efe-43e8-88a3-698d70c9628c",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        16,
+        192
+      ],
+      "id": "7048b22b-0504-40f4-a402-fd5fc96920b9",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analysoi kuluvan päivän sähkön tuntihinnat seuraavasta JSON-datasta:\n\n{{ JSON.stringify($json) }}\n\nTehtäväsi on:\n1. Analysoi ainoastaan tunnit, jotka ovat aikavälillä 07:00-23:00.\n2. Järjestä data tämän aikavälin sisällä hinnan perusteella halvimmasta kalleimpaan. Huomaa, että negatiiviset luvut ovat pienempiä kuin positiiviset.\n3. Valitse neljä (4) halvinta tuntia.\n4. Muunna nämä hinnat yksiköstä €/MWh yksikköön snt/kWh. Varmista, että muunnos on tarkka (esim. 21.3 €/MWh = 2.13 snt/kWh). Älä tee pyöristyksiä.\n5. Luo vain yksi selkeä ja ytimekäs viesti Telegramiin loogisessa järjestyksessä tuntien mukaan.Listaa tulokset ranskalaisin viivoin ja käytä muotoa -klo xx:xx: x.xx snt/kwh.\n6. Mainitse viestissä halvimmat ajankohdat ja niiden hinnat tarkasti kahden desimaalin tarkkuudella. Varmista, että -merkkiset hinnat näkyvät oikein.\n7. Älä käytä mitään työkaluja, vaan analysoi vain annettu data kerran ja lähetä yksi vastaus.\n8.Älä käytä vastauksessa sanaa \"Huomisen\", vaan kuluvan päivän hinnat.\n9.Pysäytä prosessi, kun olet lähettenyt yhden telegram viestin.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        0
+      ],
+      "id": "8c51af44-eb4a-4c00-972b-47068b2899cd",
+      "name": "AI Agent",
+      "alwaysOutputData": true,
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        432,
+        208
+      ],
+      "id": "240986c3-0620-4fd5-8d4c-fa4408c9ecb7",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_GOOGLE_API_KEY",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Text', ``, 'string') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTool",
+      "typeVersion": 1.2,
+      "position": [
+        736,
+        256
+      ],
+      "id": "c09a7fd4-f199-4c26-a922-4d28558d130d",
+      "name": "Send a text message in Telegram",
+      "webhookId": "YOUR_WEBHOOKID_UNIQUE_ID",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_TELEGRAM_API_TOKEN",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        576,
+        240
+      ],
+      "id": "b5dcb3a2-d164-4fb2-8c13-c4b64e285a6e",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    json: {\n      data: items.map(item => ({\n        ...item.json\n      })),\n      sessionId: 'static-session'\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        336,
+        0
+      ],
+      "id": "024419cf-1ac6-47be-9a87-e1d99db1d355",
+      "name": "Code"
+    }
+  ],
+  "pinData": {
+    "When clicking ‘Execute workflow’": [
+      {
+        "json": {}
+      }
+    ]
+  },
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message in Telegram": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "198424b5-f00c-4f9a-bd8d-f1932e308368",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7d43017fd6693932a2086dec0215f891dc411f9c3fce75e0104167980a585654"
+  },
+  "id": "ei7ssrQHOS1OGy5L",
+  "tags": []
+}
