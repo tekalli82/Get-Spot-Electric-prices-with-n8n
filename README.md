@@ -1,5 +1,5 @@
 # Get-Spot-Electric-prices-with-n8n
-n8n AI Agent retrieves four(4) cheapest spot electric hours daily and outputs them to users Telegram-app.
+n8n AI Agent retrieves four(4) cheapest spot electric hours daily and outputs them to users Telegram-app at 7am.
 
 Imported json doesn't work as is! 
 
