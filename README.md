@@ -23,3 +23,4 @@ User must add own Id's to workflow!
   -Input own webhookId as YOUR_WEBHOOKID_UNIQUE_ID
   
 <img width="1501" height="855" alt="kuva" src="https://github.com/user-attachments/assets/c2152326-7a04-4757-af63-dc419dcf4073" />
+<img width="1039" height="1729" alt="kuva" src="https://github.com/user-attachments/assets/5010ca65-26f4-4d06-87f9-41c4671bcf8e" />
